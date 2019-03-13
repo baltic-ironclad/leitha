@@ -1,0 +1,10 @@
+[package]
+name = "leitha"
+version = "0.1.0"
+authors = ["Diku-chan <kdv99@mail.ru>"]
+edition = "2018"
+
+[dependencies]
+reqwest = "0.9.10"
+select = "0.4.2"
+scraper = "0.9.1"
