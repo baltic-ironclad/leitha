@@ -1,0 +1,19 @@
+{
+    "url": "https://news.ycombinator.com/",
+    "item": {
+        "class": "athing"
+    },
+    "parameters": [
+        {
+            "class": "rank"
+        },
+        {
+            "class": "title",
+            "name": "a"
+        },
+        {
+            "class": "title",
+            "name": "a"
+        }
+    ]
+}
