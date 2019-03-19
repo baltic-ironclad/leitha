@@ -1,23 +1,30 @@
-extern crate reqwest;
-extern crate select;
-extern crate scraper;
+extern crate reqwest; // Send HTTP requests
+extern crate select; // Inspect element
 
-use select::document::Document;
-use select::predicate::{Class, Name};
+extern crate clap; // Work with command line
 
-pub fn load_page(url: &str) {
-    let response = reqwest::get(url).unwrap();
+extern crate serde_derive;
+extern crate serde; // Serialize and deserialize
+extern crate serde_json; // Read and write JSON
+
+use std::fs::File;
+use std::io::Read;
+use std::path::Path;
+
+pub fn get_page(url: &str) -> String {
+    let client = reqwest::Client::new();
+    let mut request = client.get(url);
+    let mut response = request.send().unwrap();
+
     assert!(response.status().is_success());
-
-    let document = Document::from_read(response).unwrap();
-
-    for node in document.find(Class("product")) {
-        let name = node.find(Class("brand-name")).next().unwrap().text();
-        let code = node.find(Name("h3")).next().unwrap().text();
-        let price = node.find(Name("strong")).next().unwrap().text();
-    }
+    return response.text().unwrap();
+    // TODO: Parse item
 }
 
-fn main() {
-    load_page("https://www.off---white.com/en/RU/section/new-arrivals");
+pub fn get_data(name: &str) {
+    let file_path = Path::new("data").join(name);
+    let file = File::open(file_path).expect("File not found");
+    // TODO: Process JSON data
 }
+
+fn main() {}
