@@ -1,24 +1,55 @@
 'use strict';
 
-chrome.runtime.onInstalled.addListener(function() {
-    chrome.storage.sync.set({color: '#3aa757'}, function() {
-        console.log("The color is green.");
-    });
-    chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
-        chrome.declarativeContent.onPageChanged.addRules([{
-            conditions: [new chrome.declarativeContent.PageStateMatcher({
-                pageUrl: {hostEquals: 'developer.chrome.com'},
-            })
-            ],
-                actions: [new chrome.declarativeContent.ShowPageAction()]
-        }]);
+let product = {name: '', price: '', image_url: ''}
 
-        chrome.declarativeContent.onPageChanged.addRules([{
-            conditions: [new chrome.declarativeContent.PageStateMatcher({
-                pageUrl: {hostEquals: 'vk.com'},
+let attributes = [{
+    name: 'name', 
+    text: 'Please select name of the product'
+}, {
+    name: 'price',
+    text: 'Please select price of the product'
+} //, {
+//      'name': 'Image',
+//      'text': 'Please select product image'
+// }
+]
+
+let iter = 0
+
+chrome.runtime.onMessage.addListener(function(message) {
+    switch (message.code) {
+        case 'run_script': {
+            iter = 0
+
+            chrome.tabs.executeScript(null, {
+                file: 'mouse_selection.js'
             })
-            ],
-                actions: [new chrome.declarativeContent.ShowPageAction()]
-        }]);
-    });
-});
+        } break;
+
+        case 'start': {
+            chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+                let attribute = attributes[iter]
+                chrome.tabs.sendMessage(tabs[0].id, {code: 'set_attribute', attribute: attribute});
+                chrome.tabs.sendMessage(tabs[0].id, {code: 'select'});
+            })
+        } break;
+
+        case 'selected': { 
+            product[iter] = message.element
+            ++iter
+            if (iter < attributes.length) {
+                chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+                    let attribute = attributes[iter]
+                    chrome.tabs.sendMessage(tabs[0].id, {code: 'set_attribute', attribute: attribute});
+                    chrome.tabs.sendMessage(tabs[0].id, {code: 'select'});
+                });
+            }
+            else {
+                chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+                    chrome.tabs.sendMessage(tabs[0].id, {code: 'close_menu'});
+                    chrome.tabs.sendMessage(tabs[0].id, {code: 'print_result', result: product});
+                });
+            }
+        } break;
+    }
+})

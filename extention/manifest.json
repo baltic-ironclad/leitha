@@ -2,13 +2,13 @@
     "name": "Leitha",
     "version": "1.0",
     "manifest_version": 2,
-    "permissions": ["activeTab" ,"declarativeContent", "storage"],
+    "permissions": ["activeTab", "tabs"],
     "background": {
         "scripts": ["background.js"],
         "persistent": false
     },
     "icons": {},
-    "page_action": {
+    "browser_action": {
         "default_popup": "popup.html",
         "default_icon": {}
     },
