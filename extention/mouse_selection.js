@@ -1,47 +1,76 @@
 'use strict'
 
-function str(el) {
-    if (!el) return "null"
-    return el.className || el.tagName;
+function isLeithaElement(a) {
+    let els = []
+    while (a) {
+        els.push(a)
+        a = a.parentNode
+    }
+
+    console.log('[mouse_selection.js]:', els)
+
+    let isLeitha = false
+    els.forEach(el => {
+        if (el.id == 'Leitha-menu') {
+            isLeitha = true
+        }
+    })
+
+    return isLeitha
 }
 
-function mouseOverOutHandler(ev) {
-    if (ev.type == 'mouseover') {
-        ev.target.style.background = 'yellow';
+class ElementAttributes {
+    constructor(el, isChild) {
+        this.tag = el.tagName
+        this.class = el.className
+        this.id = el.id
+        this.isChild = isChild
+        if (isChild) {
+            this.parent = new ElementAttributes(el.parentNode, false)
+        }
+        else {
+            this.parent = null
+        }
+
     }
-    if (ev.type == 'mouseout') {
-        ev.target.style.background = '';
-    }
-    // let logMessage = ev.type + ': ' +
-    //     'target=' + str(ev.target) +
-    //     ', relatedTarget=' + str(ev.relatedTarget) + "\n";
-    // console.log(logMessage);
 }
 
-function mouseClickHandler(ev) {
-    ev.target.style.background = '';
+function mouseOverOutHandler(event) {
+    if (isLeithaElement(event.target)) {
+        return
+    }
+
+    if (event.type == 'mouseover') {
+        event.target.style.background = 'yellow'
+    }
+    if (event.type == 'mouseout') {
+        event.target.style.background = ''
+    }
+}
+
+function mouseClickHandler(event) {
+    if (isLeithaElement(event.target)) {
+        return
+    }
+
+    event.target.style.background = ''
     document.body.removeEventListener('mouseover', mouseOverOutHandler)
     document.body.removeEventListener('mouseout', mouseOverOutHandler)
     document.body.removeEventListener('click', mouseClickHandler)
 
-    // let logMessage = ev.type + ': ' +
-    //     'target=' + str(ev.target) +
-    //     ', relatedTarget=' + str(ev.relatedTarget) + "\n";
-    // console.log(logMessage);
+    let elementAttr = new ElementAttributes(event.target, true)
 
-    console.log('[mouse_selection.js] SELECTION ENDED')
-    chrome.runtime.sendMessage({code: 'selected', element: ev.target})    
+    console.log('[mouse_selection.js]: selection ended')
+    chrome.runtime.sendMessage({code: 'selected', element: elementAttr})    
 }
 
 chrome.runtime.onMessage.addListener(function(message) {
     switch (message.code) {
         case 'select': {
-            console.log('[mouse_selection.js] SELECTION STARTED')
+            console.log('[mouse_selection.js]: selection started')
             document.body.addEventListener('mouseover', mouseOverOutHandler)
             document.body.addEventListener('mouseout', mouseOverOutHandler)
             document.body.addEventListener('click', mouseClickHandler)
         } break;
     }
 })
-
-chrome.runtime.sendMessage({code: 'start'})

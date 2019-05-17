@@ -1,5 +1,12 @@
 'use strict';
 
+function nameByCode(n) {
+    switch (n) {
+        case 0: return 'name'
+        case 1: return 'price'
+    }
+}
+
 let product = {name: '', price: '', image_url: ''}
 
 let attributes = [{
@@ -14,37 +21,39 @@ let attributes = [{
 // }
 ]
 
-let iter = 0
+let counter = 0
 
 chrome.runtime.onMessage.addListener(function(message) {
     switch (message.code) {
-        case 'run_script': {
-            iter = 0
+        case 'run_selection': {
+            counter = 0
 
-            chrome.tabs.executeScript(null, {
-                file: 'mouse_selection.js'
-            })
-        } break;
-
-        case 'start': {
             chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                let attribute = attributes[iter]
-                chrome.tabs.sendMessage(tabs[0].id, {code: 'set_attribute', attribute: attribute});
-                chrome.tabs.sendMessage(tabs[0].id, {code: 'select'});
+                chrome.tabs.sendMessage(tabs[0].id, {code: 'start_menu'})
+                chrome.tabs.sendMessage(tabs[0].id, {code: 'set_attribute', attribute: attributes[counter]})
+                chrome.tabs.sendMessage(tabs[0].id, {code: 'select'})
             })
         } break;
 
         case 'selected': { 
-            product[iter] = message.element
-            ++iter
-            if (iter < attributes.length) {
+            switch (counter) {
+                case 0:  {
+                    product.name = message.element
+                }
+                case 1:  {
+                    product.price = message.element
+                }
+            }
+
+            ++counter
+            if (counter < attributes.length) {
                 chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                    let attribute = attributes[iter]
-                    chrome.tabs.sendMessage(tabs[0].id, {code: 'set_attribute', attribute: attribute});
+                    let attribute = attributes[counter]
+                    chrome.tabs.sendMessage(tabs[0].id, {code: 'set_attribute', attribute: attributes[counter]});
                     chrome.tabs.sendMessage(tabs[0].id, {code: 'select'});
                 });
             }
-            else {
+            else { // All attributes have been selected
                 chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
                     chrome.tabs.sendMessage(tabs[0].id, {code: 'close_menu'});
                     chrome.tabs.sendMessage(tabs[0].id, {code: 'print_result', result: product});
