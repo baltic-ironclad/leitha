@@ -1,10 +1,21 @@
 'use strict';
 
-function sendResult(element) {
+let ip = '92.42.30.106'
+let port = '7373'
+let url = 'wss://' + ip + ':' + port
+function sendResult(element, url) {
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
         element['url'] = tabs[0].url
         chrome.tabs.sendMessage(tabs[0].id, {code: 'print_result', result: element});
     });
+
+    let socket = new WebSocket(url)
+
+    socket.onopen = function(event) {
+        socket.send(JSON.stringify(element)) 
+    };
+    
+
 }
 
 
@@ -36,12 +47,12 @@ chrome.runtime.onMessage.addListener(function(message) {
 
         } break;
 
-        case 'work': {
-            console.log('it works')
+        case 'selected': {
+            sendResult(message.element, url)
         } break;
 
-        case 'selected': {
-            sendResult(message.element)
-        } break;
+        // case 'cancel': {
+            
+        // }
     }
 })
