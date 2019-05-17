@@ -7,7 +7,7 @@ function isLeithaElement(a) {
         a = a.parentNode
     }
 
-    console.log('[mouse_selection.js]:', els)
+    //console.log('[mouse_selection.js]:', els)
 
     let isLeitha = false
     els.forEach(el => {
@@ -49,6 +49,8 @@ function mouseOverOutHandler(event) {
 }
 
 function mouseClickHandler(event) {
+    event.preventDefault()
+    
     if (isLeithaElement(event.target)) {
         return
     }

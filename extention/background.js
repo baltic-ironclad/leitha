@@ -7,15 +7,19 @@ function nameByCode(n) {
     }
 }
 
+function sendResult() {
+    
+}
+
 let product = {name: '', price: '', image_url: ''}
 
 let attributes = [{
     name: 'name', 
     text: 'Please select name of the product'
-}, {
-    name: 'price',
-    text: 'Please select price of the product'
-} //, {
+}//, {s
+    // name: 'price',
+    // text: 'Please select price of the product'
+//}, {
 //      'name': 'Image',
 //      'text': 'Please select product image'
 // }
