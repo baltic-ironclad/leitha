@@ -1,61 +1,50 @@
 'use strict';
 
-function sendResult(product) {
+function sendResult(element) {
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-        chrome.tabs.sendMessage(tabs[0].id, {code: 'close_menu'});
-        chrome.tabs.sendMessage(tabs[0].id, {code: 'print_result', result: product});
+        element['url'] = tabs[0].url
+        element['id'] = tabs[0].id
+        chrome.tabs.sendMessage(tabs[0].id, {code: 'print_result', result: element});
     });
 }
 
-let product = {name: '', price: '', image_url: ''}
 
-let attributes = [{
-    name: 'name', 
-    text: 'Please select name of the product'
-}//, {
-//     name: 'price',
-//     text: 'Please select price of the product'
-// }, {
-//      'name': 'Image',
-//      'text': 'Please select product image'
-// }
-]
-
-let counter = 0
+let isStarted = [  ]
 
 chrome.runtime.onMessage.addListener(function(message) {
     switch (message.code) {
         case 'run_selection': {
-            counter = 0
+            var id
+            chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+                id = tabs[0].id
+            });
+
+            let flag = isStarted.some(tabId => {
+                return id == tabId
+            })
+
+
+
+            if (!flag) {
+                chrome.tabs.executeScript({file: 'print_result.js'})
+                chrome.tabs.executeScript({file: 'mouse_selection.js'})
+                isStarted.push(id)
+            }
+            else {
+                console.log('cannot open, id:', id)
+            }
 
             chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                chrome.tabs.sendMessage(tabs[0].id, {code: 'start_menu'})
-                chrome.tabs.sendMessage(tabs[0].id, {code: 'set_attribute', attribute: attributes[counter]})
                 chrome.tabs.sendMessage(tabs[0].id, {code: 'select'})
-            })
+            });
         } break;
 
-        case 'selected': { 
-            switch (counter) {
-                case 0:  {
-                    product.name = message.element
-                }
-                case 1:  {
-                    product.price = message.element
-                }
-            }
+        case 'work': {
+            console.log('it works')
+        } break;
 
-            ++counter
-            if (counter < attributes.length) {
-                chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                    let attribute = attributes[counter]
-                    chrome.tabs.sendMessage(tabs[0].id, {code: 'set_attribute', attribute: attributes[counter]});
-                    chrome.tabs.sendMessage(tabs[0].id, {code: 'select'});
-                });
-            }
-            else { // All attributes have been selected
-                sendResult(product)
-            }
+        case 'selected': {
+            sendResult(message.element)
         } break;
     }
 })

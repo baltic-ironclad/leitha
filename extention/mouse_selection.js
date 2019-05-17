@@ -7,8 +7,6 @@ function isLeithaElement(a) {
         a = a.parentNode
     }
 
-    //console.log('[mouse_selection.js]:', els)
-
     let isLeitha = false
     els.forEach(el => {
         if (el.id == 'Leitha-menu') {
@@ -23,15 +21,6 @@ class ElementAttributes {
     constructor(el, isChild) {
         this.tag = el.tagName
         this.class = el.className
-        this.id = el.id
-        this.isChild = isChild
-        if (isChild) {
-            this.parent = new ElementAttributes(el.parentNode, false)
-        }
-        else {
-            this.parent = null
-        }
-
     }
 }
 
@@ -50,7 +39,7 @@ function mouseOverOutHandler(event) {
 
 function mouseClickHandler(event) {
     event.preventDefault()
-    
+
     if (isLeithaElement(event.target)) {
         return
     }
@@ -60,7 +49,7 @@ function mouseClickHandler(event) {
     document.body.removeEventListener('mouseout', mouseOverOutHandler)
     document.body.removeEventListener('click', mouseClickHandler)
 
-    let elementAttr = new ElementAttributes(event.target, true)
+    let elementAttr = new ElementAttributes(event.target)
 
     console.log('[mouse_selection.js]: selection ended')
     chrome.runtime.sendMessage({code: 'selected', element: elementAttr})    
@@ -76,3 +65,6 @@ chrome.runtime.onMessage.addListener(function(message) {
         } break;
     }
 })
+
+
+chrome.runtime.sendMessage({code: 'work'})

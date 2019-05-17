@@ -12,9 +12,8 @@ function startMenu() {
 
     menu.style.background = 'lightblue'
 
-    let name = document.createElement('div')
-    menu.appendChild(name)
     let text = document.createElement('div')
+    text.textContent = 'Select one of the elements you want to observe'
     menu.appendChild(text)
 
     return menu
@@ -28,11 +27,6 @@ chrome.runtime.onMessage.addListener(function(message) {
         case 'start_menu': {
             menu = startMenu()
             console.log('[menu.js]: menu is created')
-        } break;
-
-        case 'set_attribute': {
-            menu.firstChild.textContent = message.attribute.name
-            menu.lastChild.textContent = message.attribute.text
         } break;
 
         case 'close_menu': {

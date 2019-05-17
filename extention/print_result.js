@@ -7,3 +7,5 @@ chrome.runtime.onMessage.addListener(function(message) {
         } break;
     }
 })
+
+chrome.runtime.sendMessage({code: 'work'})
