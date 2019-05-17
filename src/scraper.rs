@@ -1,6 +1,6 @@
 use std::{
     fs::File,
-    io::{Read, BufReader},
+    io::Read,
     path::PathBuf
 };
 use scraper::{Html, Selector};

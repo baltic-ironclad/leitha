@@ -1,3 +1,4 @@
+data/storage.vkf
 /target
 **/*.rs.bk
 Cargo.lock
