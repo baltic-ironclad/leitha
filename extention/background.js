@@ -1,14 +1,10 @@
 'use strict';
 
-function nameByCode(n) {
-    switch (n) {
-        case 0: return 'name'
-        case 1: return 'price'
-    }
-}
-
-function sendResult() {
-    
+function sendResult(product) {
+    chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+        chrome.tabs.sendMessage(tabs[0].id, {code: 'close_menu'});
+        chrome.tabs.sendMessage(tabs[0].id, {code: 'print_result', result: product});
+    });
 }
 
 let product = {name: '', price: '', image_url: ''}
@@ -16,10 +12,10 @@ let product = {name: '', price: '', image_url: ''}
 let attributes = [{
     name: 'name', 
     text: 'Please select name of the product'
-}//, {s
-    // name: 'price',
-    // text: 'Please select price of the product'
-//}, {
+}//, {
+//     name: 'price',
+//     text: 'Please select price of the product'
+// }, {
 //      'name': 'Image',
 //      'text': 'Please select product image'
 // }
@@ -58,10 +54,7 @@ chrome.runtime.onMessage.addListener(function(message) {
                 });
             }
             else { // All attributes have been selected
-                chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-                    chrome.tabs.sendMessage(tabs[0].id, {code: 'close_menu'});
-                    chrome.tabs.sendMessage(tabs[0].id, {code: 'print_result', result: product});
-                });
+                sendResult(product)
             }
         } break;
     }

@@ -1,1 +1,12 @@
-{}
+[{
+    "url": "news.ycombinator.com",
+   	"items": [{
+   		"name": "score",
+   		"tag": "SPAN",
+        "class": "score"
+    }, {
+    	"name": "title",
+    	"tag": "A",
+    	"class": "storylink"
+    }],
+}]
