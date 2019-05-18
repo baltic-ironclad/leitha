@@ -11,11 +11,13 @@ button.addEventListener('click', function() {
     text.textContent = 'Select one of the elements you want to observe'
     document.body.appendChild(text)
 
-  //   let cancel = document.createElement('button')
-  //   cancel.textContent = 'Cancel'
-  //   cancel.addEventListener('click', function(event) {
-		// chrome.runtime.sendMessage({code: 'cancel'})
-		// button.style.display = 'block'
-		// text.remove()
-  //   })
+    let cancel = document.createElement('button')
+    cancel.textContent = 'Cancel'
+    cancel.addEventListener('click', function(event) {
+		chrome.runtime.sendMessage({code: 'cancel'})
+		button.style.display = 'block'
+		text.remove()
+		cancel.remove()
+    })
+    document.body.appendChild(cancel)
 })

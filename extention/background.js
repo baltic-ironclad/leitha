@@ -1,8 +1,12 @@
 'use strict';
 
-let ip = '92.42.30.106'
-let port = '7373'
-let url = 'wss://' + ip + ':' + port
+//DIMA IP
+// let ip = '92.42.30.106'
+// let port = '7373'
+// let url = 'wss://' + ip + ':' + port
+
+let url = 'ws://127.0.0.1:1337' 
+
 function sendResult(element, url) {
     chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
         element['url'] = tabs[0].url
@@ -14,8 +18,6 @@ function sendResult(element, url) {
     socket.onopen = function(event) {
         socket.send(JSON.stringify(element)) 
     };
-    
-
 }
 
 
@@ -51,8 +53,10 @@ chrome.runtime.onMessage.addListener(function(message) {
             sendResult(message.element, url)
         } break;
 
-        // case 'cancel': {
-            
-        // }
+        case 'cancel': {
+            chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+                chrome.tabs.sendMessage(tabs[0].id, {code: 'cancel_selection'})
+            });
+        }
     }
 })

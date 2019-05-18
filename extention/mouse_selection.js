@@ -63,8 +63,12 @@ chrome.runtime.onMessage.addListener(function(message) {
             document.body.addEventListener('mouseout', mouseOverOutHandler)
             document.body.addEventListener('click', mouseClickHandler)
         } break;
+
+        case 'cancel_selection': {
+            console.log("[mouse_selection.js]: selection's canceled")
+            document.body.removeEventListener('mouseover', mouseOverOutHandler)
+            document.body.removeEventListener('mouseout', mouseOverOutHandler)
+            document.body.removeEventListener('click', mouseClickHandler)            
+        } break;
     }
 })
-
-
-chrome.runtime.sendMessage({code: 'work'})
