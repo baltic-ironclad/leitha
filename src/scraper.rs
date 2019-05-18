@@ -7,7 +7,7 @@ use scraper::{Html, Selector};
 use serde::{Serialize, Deserialize};
 
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Descriptor {
     url: String,
     tag: String,
