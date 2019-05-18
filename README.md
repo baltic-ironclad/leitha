@@ -4,9 +4,9 @@ Web monitoring service. Hang crawler on any site and get instant updates.
 
 ## Roadmap
 
-- [ ] Browser CSS-selector extension
-- [ ] Scraping and database updates
-- [ ] Client-server communication and distant tuning
+- [X] Browser CSS-selector extension
+- [X] Scraping and database updates
+- [X] Client-server communication and distant tuning
 
 ## Contributing
 
